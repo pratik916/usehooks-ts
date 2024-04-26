@@ -11,6 +11,18 @@ type UseScriptOptions = {
   removeOnUnmount?: boolean
   /** Script's `id` (optional). */
   id?: string
+
+  /** Script's type attribute.
+   * For more information follow https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type
+   */
+  type?: string
+
+  /**
+   * For classic scripts, if `true` then the classic script will be fetched in parallel to parsing and evaluated as soon as it is available.
+   * For type module, if `true` then the scripts and all their dependencies will be fetched in parallel to parsing and evaluated as soon as they are available.
+   * For more information follow https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#async
+   */
+  async?: boolean
 }
 
 // Cached script statuses
@@ -88,10 +100,21 @@ export function useScript(
       // Create script element and add it to document body
       scriptNode = document.createElement('script')
       scriptNode.src = src
-      scriptNode.async = true
+
+      let async = true
+      if (options.hasOwnProperty('async')) {
+        async = options?.async
+      }
+
+      scriptNode.async = async
       if (options?.id) {
         scriptNode.id = options.id
       }
+
+      if (options?.type) {
+        scriptNode.type = options.type
+      }
+
       scriptNode.setAttribute('data-status', 'loading')
       document.body.appendChild(scriptNode)
 

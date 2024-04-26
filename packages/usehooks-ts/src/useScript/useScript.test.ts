@@ -80,4 +80,23 @@ describe('useScript', () => {
     expect(document.querySelector(`script[id="${id}"]`)).not.toBeNull()
     expect(document.querySelector(`script[src="${src}"]`)?.id).toBe(id)
   })
+
+  it('should have a `type` attribute when given', () => {
+    const src = '/'
+    const type = 'module'
+
+    const { result } = renderHook(() => useScript(src, { type }))
+
+    // Make sure the document is loaded
+    act(() => {
+      document
+        .querySelector(`script[src="${src}"]`)
+        ?.dispatchEvent(new Event('load'))
+    })
+
+    expect(result.current).toBe('ready')
+
+    expect(document.querySelector(`script[id="${id}"]`)).not.toBeNull()
+    expect(document.querySelector(`script[src="${src}"]`)?.type).toBe(type)
+  })
 })
